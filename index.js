@@ -11,7 +11,7 @@ function calcFactor(oldFac, quality) {
  * @params {number} a number between 0~5 representing the quality of review. 0 is the worse while 5 is the best.
  * @params {number} the factor of last schedual
  */
-export default function (quality, lastSchedule, lastFactor) {
+module.exports = function (quality, lastSchedule, lastFactor) {
     let newFac
     let curSchedule
     
@@ -22,7 +22,7 @@ export default function (quality, lastSchedule, lastFactor) {
     if(lastSchedule === 1) {
         curSchedule = 6
         newFac = 2.5
-    } else if(lastSchedule == null) {
+    } else if(lastSchedule == null || lastSchedule === 0) {
         curSchedule = 1
         newFac = 2.5
     } else {
