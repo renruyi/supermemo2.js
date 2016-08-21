@@ -1,10 +1,12 @@
+'use strict'
 /**
  * @params {number} the old factor of the previous day
  * @params {number} the quality of review
  */
 
 function calcFactor(oldFac, quality) {
-    return oldFac + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))
+    let factor = oldFac + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+    return Math.max(1.3, factor);
 }
 
 /**
@@ -12,30 +14,29 @@ function calcFactor(oldFac, quality) {
  * @params {number} the factor of last schedual
  */
 module.exports = function (quality, lastSchedule, lastFactor) {
-    let newFac
-    let curSchedule
+    let newFac;
+    let curSchedule;
     
     if(quality == null || quality < 0 || quality > 5) {
-        quality = 0
+        quality = 0;
     }
     
     if(lastSchedule === 1) {
         curSchedule = 6
-        newFac = 2.5
-    } else if(lastSchedule == null || lastSchedule === 0) {
+        newFac = calcFactor(lastFactor, quality)
+    } else if(!lastSchedule || lastSchedule === 0) {
         curSchedule = 1
-        newFac = 2.5
+        if (!lastFactor||lastFactor===0){
+            newFac = 2.5
+        }else{
+            newFac = calcFactor(lastFactor, quality)
+        }
     } else {
         if(quality < 3) {
             newFac = lastFactor
             curSchedule = lastSchedule
         } else {
             newFac = calcFactor(lastFactor, quality)
-            
-            if(newFac < 1.3) {
-                newFac = 1.3
-            }
-            
             curSchedule = Math.round(lastSchedule * newFac)
         }
     }
@@ -43,6 +44,7 @@ module.exports = function (quality, lastSchedule, lastFactor) {
     return {
         factor: newFac,
         schedule: curSchedule,
-        isRepeatAgain: quality < 4
+        needReview: quality < 4,
+        needRestart: quality < 3
     }
 }
