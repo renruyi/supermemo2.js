@@ -34,7 +34,7 @@ module.exports = function (quality, lastSchedule, lastFactor) {
     } else {
         if(quality < 3) {
             newFac = lastFactor
-            curSchedule = lastSchedule
+            curSchedule = 1
         } else {
             newFac = calcFactor(lastFactor, quality)
             curSchedule = Math.round(lastSchedule * newFac)
